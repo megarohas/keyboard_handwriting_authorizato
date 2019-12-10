@@ -1,7 +1,9 @@
-import withMongoConnect from "../../helpers/mongo_connector.js";
+import withMongoConnect from "../../helpers/back/mongo_connector.js";
+import JWTcheck from "../../helpers/back/auth_checker.js";
 let random_namer = require("random-name");
 
 const handler = async ({ req, res, db }) => {
+  JWTcheck({ req, res });
   const users = db.getTable("users");
   let name = random_namer.first().toLowerCase();
   let new_user_data = {

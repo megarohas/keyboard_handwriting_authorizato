@@ -1,8 +1,9 @@
-import withMongoConnect from "../../helpers/mongo_connector.js";
+import withMongoConnect from "../../helpers/back/mongo_connector.js";
 let bcrypt = require("bcrypt");
 let jwt = require("jwt-simple");
 
 const handler = async ({ req, res, db }) => {
+  console.log("req.body", req.body);
   const users = db.getTable("users");
   if (!req.body.email || !req.body.password) {
     res.statusCode = 400;
