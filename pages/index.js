@@ -7,6 +7,7 @@ import Link from "next/link.js";
 import axios from "axios";
 import { Cookies } from "react-cookie";
 import LoginForm from "../components/login_form.js";
+import SignupForm from "../components/signup_form.js";
 
 // <div className="hero">
 //   <h1 className="title">Welcome to Next.js!</h1>
@@ -80,15 +81,56 @@ import LoginForm from "../components/login_form.js";
 //   }
 // `}</style>
 
-const Home = () => (
-  <div>
-    <Head>
-      <title>Home</title>
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show_form_id: 0
+    };
+  }
+  render() {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          top: "0px",
+          left: "0px",
+          width: "100%",
+          height: "100%",
+          backgroundImage: "url(/bg.jpg)"
+        }}
+      >
+        <Head>
+          <title>Home</title>
+          <link rel="icon" href="/favicon.ico" />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
 
-    <LoginForm />
-  </div>
-);
+        {this.state.show_form_id === 0 && (
+          <LoginForm
+            button_action={() => {
+              this.setState({ show_form_id: 1 });
+            }}
+            button_text={"i have an account"}
+          />
+        )}
+        {this.state.show_form_id === 1 && (
+          <SignupForm
+            button_action={() => {
+              this.setState({ show_form_id: 0 });
+            }}
+            button_text={"i don't have an account"}
+          />
+        )}
+      </div>
+    );
+  }
+}
 
 export default Home;

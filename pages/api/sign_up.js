@@ -7,7 +7,8 @@ const handler = async ({ req, res, db }) => {
   let new_user_data = {
     name: req.body.name,
     email: req.body.email,
-    password_hash: ""
+    password_hash: "",
+    token: jwt.encode({ email: req.body.email }, "lhbcyz")
   };
   return bcrypt.hash(req.body.password, 10, (err, hash) => {
     new_user_data.password_hash = hash;

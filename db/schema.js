@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const users_schema = new Schema({
   name: String,
   password_hash: String,
-  email: { type: String, unique: true }
+  email: { type: String, unique: true },
+  token: { type: String, unique: true }
   // shopify_order_data: { type: Schema.Types.Mixed, required: true },
   // status: { type: Boolean, required: true },
   // status_detail: { type: Schema.Types.Mixed, required: true },

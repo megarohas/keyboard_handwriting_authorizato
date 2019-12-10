@@ -4,18 +4,17 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-const cookies = new Cookies();
 import Snackbar from "@material-ui/core/Snackbar";
-import Router from "next/router";
+const cookies = new Cookies();
 
-class LoginForm extends React.Component {
+class SignupForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       token: cookies.get("token") || null,
       email: "",
       password: "",
-      alert_is_open: false
+      name: ""
     };
   }
 
@@ -24,21 +23,18 @@ class LoginForm extends React.Component {
   // </Link>
 
   onLoginClick = async () => {
-    const response = await axios.post("/api/log_in", {
+    const response = await axios.post("/api/sign_up", {
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      name: this.state.name
     });
-    const token = response.data.token;
-    // alert("Login was successful");
-    cookies.set("token", token);
-    this.setState({
-      token: token,
-      alert_is_open: true
-    });
+
+    // alert("Account was created");
+    this.setState({ alert_is_open: true });
     setTimeout(() => {
       this.setState({ alert_is_open: false });
-      Router.push("/profile");
-    }, 1000);
+      this.props.button_action();
+    }, 2000);
   };
 
   render() {
@@ -75,7 +71,7 @@ class LoginForm extends React.Component {
                 textAlign: "center"
               }}
             >
-              Login was successful
+              Account was created
             </span>
           }
         />
@@ -100,9 +96,20 @@ class LoginForm extends React.Component {
               textShadow: "1px 1px 2px #e200ff59"
             }}
           >
-            Enter required data for login
+            Enter required data to sign up
           </div>
           <div style={{ width: "20px", height: "40px" }} />
+          <TextField
+            required
+            id="filled-required-email"
+            label="Name"
+            defaultValue=""
+            variant="filled"
+            onChange={e => {
+              this.setState({ name: e.target.value });
+            }}
+          />
+          <div style={{ width: "20px", height: "20px" }} />
           <TextField
             required
             id="filled-required-email"
@@ -132,7 +139,7 @@ class LoginForm extends React.Component {
               this.onLoginClick();
             }}
           >
-            LogIn
+            SignUp
           </Button>
           <div style={{ width: "20px", height: "20px" }} />
           <Button
@@ -150,4 +157,4 @@ class LoginForm extends React.Component {
   }
 }
 
-export default LoginForm;
+export default SignupForm;

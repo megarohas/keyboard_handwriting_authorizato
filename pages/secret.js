@@ -37,6 +37,7 @@ class Secret extends React.Component {
 
 Secret.getInitialProps = async ctx => {
   await handleAuthSSR(ctx);
+
   return {};
 };
 
