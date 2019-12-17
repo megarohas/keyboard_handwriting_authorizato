@@ -5,7 +5,8 @@ const users_schema = new Schema({
   name: String,
   password_hash: String,
   email: { type: String, unique: true },
-  token: { type: String, unique: true }
+  token: { type: String, unique: true },
+  id: { required: true, type: String, unique: true }
   // shopify_order_data: { type: Schema.Types.Mixed, required: true },
   // status: { type: Boolean, required: true },
   // status_detail: { type: Schema.Types.Mixed, required: true },
@@ -27,10 +28,10 @@ const users_schema = new Schema({
 // exports.users = mongoose.model("users", userSchema);
 exports.users_schema = users_schema;
 
-const net_schema = new Schema({
+const nets_schema = new Schema({
   phrase: String,
-  net: { type: Schema.Types.Mixed, required: true },
-  id: Number
+  net: Schema.Types.Mixed,
+  id: { required: true, type: String, unique: true }
   // shopify_order_data: { type: Schema.Types.Mixed, required: true },
   // status: { type: Boolean, required: true },
   // status_detail: { type: Schema.Types.Mixed, required: true },
@@ -48,6 +49,7 @@ const net_schema = new Schema({
   //   }
   // } //TODO: переделать логику в orders.js и сделать unique:true
 });
+
 // exports.createUsersTable = mongoose.model("users", userSchema);
 // exports.users = mongoose.model("users", userSchema);
-exports.users_schema = net_schema;
+exports.nets_schema = nets_schema;

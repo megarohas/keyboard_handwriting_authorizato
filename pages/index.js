@@ -117,7 +117,7 @@ class Home extends React.Component {
             button_action={() => {
               this.setState({ show_form_id: 1 });
             }}
-            button_text={"i have an account"}
+            button_text={"i don't have an account"}
           />
         )}
         {this.state.show_form_id === 1 && (
@@ -125,7 +125,7 @@ class Home extends React.Component {
             button_action={() => {
               this.setState({ show_form_id: 0 });
             }}
-            button_text={"i don't have an account"}
+            button_text={"i have an account"}
           />
         )}
       </div>

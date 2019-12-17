@@ -15,13 +15,24 @@ class LoginForm extends React.Component {
       token: cookies.get("token") || null,
       email: "",
       password: "",
-      alert_is_open: false
+      phrase: "",
+      alert_is_open: false,
+      last_key_down_timestamp: 0,
+      last_key_up_timestamp: 0,
+      keybord_actions: []
     };
   }
 
   // <Link href="/secret">
   //   <a>Secret page</a>
   // </Link>
+
+  componentDidMount() {
+    axios.get("/api/get_current_phrase").then(response => {
+      console.log("response", response);
+      this.setState({ phrase: response.data.phrase });
+    });
+  }
 
   onLoginClick = async () => {
     const response = await axios.post("/api/log_in", {
@@ -126,6 +137,54 @@ class LoginForm extends React.Component {
             }}
           />
           <div style={{ width: "20px", height: "20px" }} />
+          <TextField
+            type={"text"}
+            id="filled"
+            label="Enter this phrase to below input to confirm your personality"
+            defaultValue={this.state.phrase}
+            variant="filled"
+            value={this.state.phrase}
+            InputProps={{
+              readOnly: true
+            }}
+          />
+          <div style={{ width: "20px", height: "20px" }} />
+          <TextField
+            type={"text"}
+            required
+            id="filled-required-password"
+            label="Enter Check Phrase Here"
+            defaultValue=""
+            variant="filled"
+            onKeyDown={e => {
+              // console.log("onKeyDown", Date.now(), e.key);
+              let keybord_actions = [...this.state.keybord_actions];
+              keybord_actions.push({
+                type: "key_down",
+                timestamp: Date.now(),
+                key: e.key
+              });
+              this.setState({ keybord_actions });
+            }}
+            onKeyUp={e => {
+              // console.log("onKeyUp", Date.now(), e.key);
+              let keybord_actions = [...this.state.keybord_actions];
+              keybord_actions.push({
+                type: "key_up",
+                timestamp: Date.now(),
+                key: e.key
+              });
+              this.setState({ keybord_actions });
+            }}
+            onChange={e => {
+              console.log("new value:", e.target.value, [
+                ...this.state.keybord_actions
+              ]);
+              this.setState({ password: e.target.value });
+            }}
+          />
+          <div style={{ width: "20px", height: "20px" }} />
+
           <Button
             variant="contained"
             onClick={() => {

@@ -1,20 +1,27 @@
 import mongoose from "mongoose";
 
-import { users_schema } from "../../db/schema.js";
+import { users_schema, nets_schema } from "../../db/schema.js";
 
 const withMongoConnect = handler => async (req, res) => {
   try {
+    // console.log("mongoose.connection:", mongoose.connection);
     if (!mongoose.connection.readyState) {
       console.log("mupa1.5");
-      const uri =
-        "mongodb+srv://megarohas:VFpfafrf14882281369@cluster-0jxmf.mongodb.net/keyboard_handwriting_authorizator?retryWrites=true&w=majority";
-      await mongoose.connect(uri, {
+      let uri =
+        // "mongodb://admin:admin@cluster-shard-00-02-0jxmf.mongodb.net:27017/keyboard_handwriting_authorizator?retryWrites=true&w=majority";
+        // "mongodb+srv://admin:admin@cluster-shard-00-00-0jxmf.mongodb.net:27017,cluster-shard-00-01-0jxmf.mongodb.net:27017,cluster-shard-00-02-0jxmf.mongodb.net:27017/keyboard_handwriting_authorizator?retryWrites=true&w=majority";
+        "mongodb+srv://megarohas:VFpfafrf14882281369@cluster0-0jxmf.gcp.mongodb.net/keyboard_handwriting_authorizator?retryWrites=true&w=majority";
+      let check = await mongoose.connect(uri, {
         useNewUrlParser: true,
         autoIndex: false
       });
+      // .catch(error => console.log(error));
     }
+    // console.log("check", nets_schema);
     let getSchema = name => {
-      if ((name = "users")) return users_schema;
+      console.log("getSchema *************:", name);
+      if (name == "users") return users_schema;
+      if (name == "nets") return nets_schema;
     };
     let modelAlreadyDeclared = name => {
       try {
@@ -39,8 +46,9 @@ const withMongoConnect = handler => async (req, res) => {
       }
     });
   } catch (e) {
+    console.log("e", e);
     res.statusCode = 500;
-    return res.end(JSON.stringify({ status: "error" }));
+    return res.end(JSON.stringify({ status: "error", error: e }));
   }
 };
 
