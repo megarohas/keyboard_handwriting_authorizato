@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 const cookies = new Cookies();
 import Snackbar from "@material-ui/core/Snackbar";
 import Router from "next/router";
+import { collectKeyboardActions } from "../helpers/front/funcs.js";
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -19,7 +20,8 @@ class LoginForm extends React.Component {
       alert_is_open: false,
       last_key_down_timestamp: 0,
       last_key_up_timestamp: 0,
-      keybord_actions: []
+      keyboard_actions: [],
+      smart_password: ""
     };
   }
 
@@ -35,17 +37,25 @@ class LoginForm extends React.Component {
   }
 
   onLoginClick = async () => {
-    const response = await axios.post("/api/log_in", {
-      email: this.state.email,
-      password: this.state.password
-    });
-    const token = response.data.token;
-    // alert("Login was successful");
-    cookies.set("token", token);
-    this.setState({
-      token: token,
-      alert_is_open: true
-    });
+    if (this.state.keyboard_actions.length > 0) {
+      let keyboard_actions = collectKeyboardActions({
+        phrase: this.state.phrase,
+        keyboard_actions: [...this.state.keyboard_actions]
+      });
+      // console.log("keyboard_actions send", keyboard_actions);
+    } else {
+      const response = await axios.post("/api/log_in", {
+        email: this.state.email,
+        password: this.state.password
+      });
+      const token = response.data.token;
+      // alert("Login was successful");
+      cookies.set("token", token);
+      this.setState({
+        token: token,
+        alert_is_open: true
+      });
+    }
     setTimeout(() => {
       this.setState({ alert_is_open: false });
       Router.push("/profile");
@@ -158,29 +168,31 @@ class LoginForm extends React.Component {
             variant="filled"
             onKeyDown={e => {
               // console.log("onKeyDown", Date.now(), e.key);
-              let keybord_actions = [...this.state.keybord_actions];
-              keybord_actions.push({
+              let keyboard_actions = [...this.state.keyboard_actions];
+              keyboard_actions.push({
                 type: "key_down",
                 timestamp: Date.now(),
                 key: e.key
               });
-              this.setState({ keybord_actions });
+              this.setState({ keyboard_actions });
             }}
             onKeyUp={e => {
               // console.log("onKeyUp", Date.now(), e.key);
-              let keybord_actions = [...this.state.keybord_actions];
-              keybord_actions.push({
+              let keyboard_actions = [...this.state.keyboard_actions];
+              keyboard_actions.push({
                 type: "key_up",
                 timestamp: Date.now(),
                 key: e.key
               });
-              this.setState({ keybord_actions });
+              this.setState({ keyboard_actions });
             }}
             onChange={e => {
-              console.log("new value:", e.target.value, [
-                ...this.state.keybord_actions
-              ]);
-              this.setState({ password: e.target.value });
+              let new_value = e.target.value || "";
+              this.setState({ smart_password: new_value }, () => {
+                // console.log("new value:", new_value, [
+                //   ...this.state.keyboard_actions
+                // ]);
+              });
             }}
           />
           <div style={{ width: "20px", height: "20px" }} />

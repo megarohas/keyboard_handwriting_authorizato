@@ -23,8 +23,11 @@ const handler = async ({ req, res, db }) => {
     let init_train_input = [];
     for (var i = 0; i < req.body.phrase.length; i++) {
       init_train_input.push(0);
-      init_train_input.push(0);
     }
+
+    init_train_input.push(0);
+    init_train_input.push(0);
+    init_train_input.push(0);
 
     console.log("init_train_input", init_train_input.length);
     net.train([{ input: [...init_train_input], output: [-1] }]);
