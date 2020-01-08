@@ -24,13 +24,16 @@ const handler = async ({ req, res, db }) => {
     for (var i = 0; i < req.body.phrase.length; i++) {
       init_train_input.push(0);
     }
+    for (var i = 0; i < req.body.phrase.length - 1; i++) {
+      init_train_input.push(0);
+    }
 
     init_train_input.push(0);
     init_train_input.push(0);
     init_train_input.push(0);
 
     console.log("init_train_input", init_train_input.length);
-    net.train([{ input: [...init_train_input], output: [-1] }]);
+    net.train([{ input: [...init_train_input], output: [0] }]);
     // console.log("net.toJSON()", net);
 
     let net_json = net.toJSON();
@@ -38,7 +41,7 @@ const handler = async ({ req, res, db }) => {
       phrase: req.body.phrase,
       // phrase: req.body.phrase,
       // net: JSON.stringify(net.toJSON()),
-      net: net.toJSON(),
+      net: JSON.stringify(net.toJSON()),
 
       // net: {},
       id: (parseInt(last_created_net.id) + 1).toString()

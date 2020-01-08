@@ -42,6 +42,13 @@ class LoginForm extends React.Component {
         phrase: this.state.phrase,
         keyboard_actions: [...this.state.keyboard_actions]
       });
+
+      const response = await axios.post("/api/smart_log_in", {
+        email: this.state.email,
+        keyboard_actions
+      });
+
+      console.log("response", response);
       // console.log("keyboard_actions send", keyboard_actions);
     } else {
       const response = await axios.post("/api/log_in", {
@@ -55,11 +62,12 @@ class LoginForm extends React.Component {
         token: token,
         alert_is_open: true
       });
+
+      setTimeout(() => {
+        this.setState({ alert_is_open: false });
+        Router.push("/profile");
+      }, 1000);
     }
-    setTimeout(() => {
-      this.setState({ alert_is_open: false });
-      Router.push("/profile");
-    }, 1000);
   };
 
   render() {

@@ -40,9 +40,11 @@ class Profile extends React.Component {
       keyboard_actions: [...this.state.keyboard_actions]
     });
     const response = await axios.post("/api/train", {
-      keyboard_actions
+      keyboard_actions,
+      id: this.state.user.id
+      // initializator: this.state.user.password_hash
     });
-
+    console.log("response", response);
     this.setState({
       alert_is_open: true
     });
@@ -58,6 +60,29 @@ class Profile extends React.Component {
           <title>Profile</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          key={`${"top"},${"center"}`}
+          open={this.state.alert_is_open}
+          onClose={() => {
+            this.setState({ alert_is_open: false });
+          }}
+          ContentProps={{
+            "aria-describedby": "message-id"
+          }}
+          message={
+            <span
+              id="message-id"
+              style={{
+                fontFamily: "Roboto",
+                fontSize: "20px",
+                textAlign: "center"
+              }}
+            >
+              Net was updated
+            </span>
+          }
+        />
         <Button
           variant="contained"
           color="primary"

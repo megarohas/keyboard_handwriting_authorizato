@@ -22,7 +22,7 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
     let keyboard_action = {};
     for (let i = 0; i < keyboard_actions.length; i++) {
       if (keyboard_actions[i].key === "Shift") shift_flag = 1;
-      if (keyboard_actions[i].key === "CapsLock") shift_flag = 1;
+      if (keyboard_actions[i].key === "CapsLock") caps_flag = 1;
 
       if (
         JSON.stringify(keyboard_action_up) == JSON.stringify({}) &&
@@ -69,9 +69,21 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
       result_actions[0].down_tmstmp) /
     1000;
 
-  result = result_actions.map(item => {
-    return item.delta;
-  });
+  // let deltas = [];
+  for (let i = 0; i < result_actions.length; i++) {
+    if (i == 0) {
+      result.push(result_actions[i].delta);
+    } else {
+      result.push(
+        (result_actions[i].down_tmstmp - result_actions[i - 1].up_tmstmp) / 1000
+      );
+      result.push(result_actions[i].delta);
+    }
+  }
+
+  // result = result_actions.map(item => {
+  //   return item.delta;
+  // });
 
   result.push(typing_time);
   result.push(shift_flag);
