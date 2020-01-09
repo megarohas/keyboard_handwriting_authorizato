@@ -17,7 +17,7 @@ const handler = async ({ req, res, db }) => {
 
     let config = {
       binaryThresh: 0.5,
-      hiddenLayers: [req.body.phrase.length * 3], // array of ints for the sizes of the hidden layers in the network
+      hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
       activation: "leaky-relu", // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
       leakyReluAlpha: 0.05 // supported for activation type 'leaky-relu'
     };

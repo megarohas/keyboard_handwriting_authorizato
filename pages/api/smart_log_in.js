@@ -15,12 +15,15 @@ const handler = async ({ req, res, db }) => {
       let keyboard_actions = req.body.keyboard_actions;
       let nets = db.getTable("nets");
       let db_nets = await nets.find().exec();
+      let db_users = await users.find().exec();
+      let last_created_user =
+        db_users.length > 0 ? db_users[db_users.length - 1] : { id: "-1" };
       let last_created_net =
         db_nets.length > 0 ? db_nets[db_nets.length - 1] : { id: "-1" };
       let user = await users.findOne({ email });
       let config = {
         binaryThresh: 0.5,
-        hiddenLayers: [req.body.phrase.length * 3], // array of ints for the sizes of the hidden layers in the network
+        hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
         activation: "leaky-relu", // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
         leakyReluAlpha: 0.05 // supported for activation type 'leaky-relu'
       };
@@ -38,9 +41,12 @@ const handler = async ({ req, res, db }) => {
       console.log("");
       console.log("smart_log_in output *******", output);
 
-      let possible_id = Math.floor(parseFloat(output["0"]));
+      let possible_id =
+        Math.trunc(parseFloat(output["0"])) == parseInt(last_created_user.id)
+          ? Math.floor(parseFloat(output["0"]))
+          : Math.round(parseFloat(output["0"]));
       console.log("smart_log_in possible_id *******", possible_id);
-      console.log("smart_log_in user_id *******", possible_id);
+      console.log("smart_log_in user_id *******", user.id);
 
       if (user.id.toString() == possible_id.toString()) {
         res.statusCode = 200;

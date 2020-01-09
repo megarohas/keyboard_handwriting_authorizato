@@ -49,9 +49,10 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
         keyboard_action = {
           down_tmstmp: keyboard_action_down.timestamp,
           up_tmstmp: keyboard_action_up.timestamp,
-          delta:
+          delta: Math.abs(
             (keyboard_action_up.timestamp - keyboard_action_down.timestamp) /
-            1000,
+              1000
+          ),
           key:
             keyboard_action_down.key.toLowerCase() ||
             keyboard_action_up.key.toLowerCase() ||
@@ -64,10 +65,11 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
     phrase = phrase.substring(1);
   } while (phrase.length > 0);
 
-  typing_time =
+  typing_time = Math.abs(
     (result_actions[result_actions.length - 1].up_tmstmp -
       result_actions[0].down_tmstmp) /
-    1000;
+      1000
+  );
 
   // let deltas = [];
   for (let i = 0; i < result_actions.length; i++) {
@@ -75,7 +77,10 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
       result.push(result_actions[i].delta);
     } else {
       result.push(
-        (result_actions[i].down_tmstmp - result_actions[i - 1].up_tmstmp) / 1000
+        Math.abs(
+          (result_actions[i].down_tmstmp - result_actions[i - 1].up_tmstmp) /
+            1000
+        )
       );
       result.push(result_actions[i].delta);
     }
@@ -86,6 +91,12 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
   // });
 
   result.push(typing_time);
+
+  for (let i = 0; i < result.length; i++) {
+    while (Math.trunc(result[i]) != 0) {
+      result[i] = result[i] / 10;
+    }
+  }
   result.push(shift_flag);
   result.push(caps_flag);
   console.log("result_actions", result_actions);
