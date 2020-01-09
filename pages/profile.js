@@ -41,7 +41,8 @@ class Profile extends React.Component {
     });
     const response = await axios.post("/api/train", {
       keyboard_actions,
-      id: this.state.user.id
+      id: this.state.user.id,
+      phrase: this.state.phrase
       // initializator: this.state.user.password_hash
     });
     console.log("response", response);

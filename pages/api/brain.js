@@ -249,7 +249,7 @@ const handler = async ({ req, res, db }) => {
   // let output = net.run([0.57, 0.127, 0.34]); // [0.987]
   // let output = net.run([0.44, 0.116, 0.24]); // [0.987]
   let output = net.run([
-    0.132,
+    0.931,
     0.083,
     0.123,
     0.112,
@@ -293,7 +293,7 @@ const handler = async ({ req, res, db }) => {
     0.059,
     0.056,
     12.519,
-    0,
+    1,
     1
   ]); // [0.987]
   console.log("output", JSON.stringify(output));

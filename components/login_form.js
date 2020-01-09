@@ -45,7 +45,8 @@ class LoginForm extends React.Component {
 
       const response = await axios.post("/api/smart_log_in", {
         email: this.state.email,
-        keyboard_actions
+        keyboard_actions,
+        phrase: this.state.phrase
       });
 
       console.log("response", response);
