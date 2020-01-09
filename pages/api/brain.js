@@ -14,7 +14,7 @@ let brain = require("brain.js");
 const handler = async ({ req, res, db }) => {
   const config = {
     binaryThresh: 0.5,
-    hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
+    hiddenLayers: [90], // array of ints for the sizes of the hidden layers in the network
     activation: "leaky-relu", // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
     leakyReluAlpha: 0.05 // supported for activation type 'leaky-relu'
   };
@@ -249,7 +249,7 @@ const handler = async ({ req, res, db }) => {
   // let output = net.run([0.57, 0.127, 0.34]); // [0.987]
   // let output = net.run([0.44, 0.116, 0.24]); // [0.987]
   let output = net.run([
-    0.931,
+    0.132,
     0.083,
     0.123,
     0.112,
@@ -274,7 +274,7 @@ const handler = async ({ req, res, db }) => {
     0.059,
     0.08,
     0.079,
-    0.053,
+    0.052,
     0.071,
     0.075,
     0.101,
@@ -293,7 +293,7 @@ const handler = async ({ req, res, db }) => {
     0.059,
     0.056,
     12.519,
-    1,
+    0,
     1
   ]); // [0.987]
   console.log("output", JSON.stringify(output));

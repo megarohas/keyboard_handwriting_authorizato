@@ -4,7 +4,7 @@ let jwt = require("jwt-simple");
 let brain = require("brain.js");
 
 const handler = async ({ req, res, db }) => {
-  console.log("req.body", req.body);
+  // console.log("req.body", req.body);
   const users = db.getTable("users");
   if (!req.body.email || !req.body.keyboard_actions) {
     res.statusCode = 400;
@@ -18,12 +18,12 @@ const handler = async ({ req, res, db }) => {
     let db_nets = await nets.find().exec();
     let last_created_net =
       db_nets.length > 0 ? db_nets[db_nets.length - 1] : { id: "-1" };
-
+    let train_memory = JSON.parse(last_created_net.train_memory).inputs;
     let user = users.findOne({ email });
 
     let config = {
       binaryThresh: 0.5,
-      hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
+      hiddenLayers: [keyboard_actions.length * 2], // array of ints for the sizes of the hidden layers in the network
       activation: "leaky-relu", // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
       leakyReluAlpha: 0.05 // supported for activation type 'leaky-relu'
     };
@@ -33,8 +33,15 @@ const handler = async ({ req, res, db }) => {
     net.fromJSON(JSON.parse(last_created_net.net));
 
     let output = net.run([...keyboard_actions]); // [0.987]
-
-    console.log("output *******", output);
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("smart_login trainers *******", last_created_net.trainers);
+    console.log("smart_login output *******", output);
     // .exec((err, user) => {
     //   if (err) {
     //     res.statusCode = 500;

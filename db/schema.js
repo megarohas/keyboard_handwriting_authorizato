@@ -31,8 +31,10 @@ exports.users_schema = users_schema;
 const nets_schema = new Schema({
   phrase: String,
   // net: Schema.Types.Mixed,
+  trainers: String,
   net: String,
-  id: { required: true, type: String, unique: true }
+  id: { required: true, type: String, unique: true },
+  train_memory: String
   // shopify_order_data: { type: Schema.Types.Mixed, required: true },
   // status: { type: Boolean, required: true },
   // status_detail: { type: Schema.Types.Mixed, required: true },

@@ -12,6 +12,8 @@ const handler = async ({ req, res, db }) => {
     let last_created_net =
       db_nets.length > 0 ? db_nets[db_nets.length - 1] : { id: "-1" };
 
+    let train_memory = JSON.parse(last_created_net.train_memory).inputs;
+
     // console.log("q0 *********", req.headers["authorization"]);
     // console.log("q0.5 *********", req.headers.cookie);
 
@@ -22,66 +24,83 @@ const handler = async ({ req, res, db }) => {
 
     // console.log("q1 *********", token);
     // let user = await users.findOne({ token });
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
+    console.log("");
     console.log("q1 *********", req.body.id);
     let user = await users.findOne({ id: req.body.id });
 
-    console.log("q2 *********", user);
+    console.log("q2 *********");
     let config = {
       binaryThresh: 0.5,
-      hiddenLayers: [3], // array of ints for the sizes of the hidden layers in the network
+      hiddenLayers: [req.body.keyboard_actions.length * 2], // array of ints for the sizes of the hidden layers in the network
       activation: "leaky-relu", // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
       leakyReluAlpha: 0.05 // supported for activation type 'leaky-relu'
     };
     console.log("q3 *********");
     let net = await new brain.NeuralNetwork(config);
-    let net2 = await new brain.NeuralNetwork(config);
     console.log("q4 *********");
     // console.log("q4 *********", last_created_net.net);
     net.fromJSON(JSON.parse(last_created_net.net));
-    console.log("q5 *********");
+    // if (train_memory.length > 0) net.train(train_memory);
+
+    // let output0 = await net.run([...req.body.keyboard_actions]);
+    // console.log("q5.0 *********", output0);
+
+    console.log("q5 *********", last_created_net.trainers);
+
     net.train([
       { input: [...req.body.keyboard_actions], output: [parseInt(user.id)] }
     ]);
-    net2.train([
-      { input: [...req.body.keyboard_actions], output: [parseInt(user.id)] }
-    ]);
 
-    let output0 = await net.run([...req.body.keyboard_actions]);
-    console.log("q5.1 *********", output0);
-    let b = net2.toJSON();
-    net2.fromJSON(b);
-
+    train_memory.push({
+      input: [...req.body.keyboard_actions],
+      output: [parseInt(user.id)]
+    });
     // console.log("q5.9 *********", b);
     // console.log("q5.95 *********", last_created_net.net);
     console.log("q6 *********");
     let output = await net.run([...req.body.keyboard_actions]);
-    let output2 = await net2.run([...req.body.keyboard_actions]);
     console.log("q6.5 *********", output);
-    console.log("q6.6 *********", output2);
     last_created_net.net = net.toJSON();
     console.log("q7 *********");
-
-    let new_net_data = {
+    let trainers = last_created_net.trainers || "";
+    let new_net = {
       phrase: last_created_net.phrase,
       // phrase: req.body.phrase,
       // net: JSON.stringify(net.toJSON()),
       net: JSON.stringify(net.toJSON()),
-
+      train_memory: JSON.stringify({ inputs: [] }),
+      // train_memory: JSON.stringify({ inputs: [...train_memory] }),
+      trainers: trainers + ", " + req.body.id.toString()
       // net: {},
-      id: (parseInt(last_created_net.id) + 1).toString()
+      // id: (parseInt(last_created_net.id) + 1).toString()
     };
 
-    let new_net = new nets(new_net_data);
-
-    new_net.save(err => {
+    // let new_net = new nets(new_net_data);
+    nets.update({ id: last_created_net.id }, new_net, {}, err => {
       if (err) {
         res.statusCode = 500;
         res.end(JSON.stringify({ status: "error" }));
       } else {
         res.statusCode = 200;
-        res.end(JSON.stringify({ new_net_data }));
+        res.end(JSON.stringify({ last_created_net }));
       }
     });
+
+    // last_created_net.save(err => {
+    //   if (err) {
+    //     res.statusCode = 500;
+    //     res.end(JSON.stringify({ status: "error" }));
+    //   } else {
+    //     res.statusCode = 200;
+    //     res.end(JSON.stringify({ last_created_net }));
+    //   }
+    // });
     // last_created_net.save((err, obj) => {
     //   console.log("q8 *********", err);
     //   // console.log("q9 *********", obj);
