@@ -13,6 +13,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { collectKeyboardActions } from "../helpers/front/funcs.js";
 import Profile from "../components/profile.js";
 import InputAnalyzer from "../components/input_analyzer.js";
+import Trains from "../components/trains.js";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class Dashboard extends React.Component {
     this.state = {
       user: { email: "", name: "Profile" },
       alert_is_open: false,
-      phrase: ""
+      phrase: "",
+      trains: []
     };
   }
 
@@ -31,6 +33,12 @@ class Dashboard extends React.Component {
       console.log("response", response);
       this.setState({ phrase: response.data.phrase });
     });
+    axios
+      .post("/api/get_user_trains", { user_id: this.props.user.id })
+      .then(response => {
+        console.log("response", response);
+        this.setState({ trains: response.data.trains });
+      });
   }
 
   render() {
@@ -117,6 +125,7 @@ class Dashboard extends React.Component {
             console.log("error");
           }}
         />
+        <Trains trains={this.state.trains} />
       </div>
     );
   }
@@ -151,7 +160,7 @@ Dashboard.getInitialProps = async ctx => {
     //   headers: { Authorization: token }
     // });
 
-    console.log(`${serverUrl}/api/get_current_user response`, response);
+    // console.log(`${serverUrl}/api/get_current_user response`, response);
   } catch (err) {
     if (ctx.res) {
       ctx.res.writeHead(302, {

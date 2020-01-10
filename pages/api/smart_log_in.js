@@ -49,9 +49,24 @@ const handler = async ({ req, res, db }) => {
       console.log("smart_log_in user_id *******", user.id);
 
       if (user.id.toString() == possible_id.toString()) {
-        res.statusCode = 200;
-        let token = jwt.encode({ email }, "lhbcyz");
-        res.end(JSON.stringify({ token }));
+        let trainers = last_created_net.trainers || "";
+        let new_net = {
+          phrase: last_created_net.phrase,
+          net: JSON.stringify(net.toJSON()),
+          train_memory: JSON.stringify({ inputs: [] }),
+          trainers: trainers + ", " + user.id.toString()
+        };
+
+        nets.update({ id: last_created_net.id }, new_net, {}, err => {
+          if (err) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ status: "error" }));
+          } else {
+            res.statusCode = 200;
+            let token = jwt.encode({ email }, "lhbcyz");
+            res.end(JSON.stringify({ token }));
+          }
+        });
       } else {
         res.statusCode = 401;
         res.end(JSON.stringify({ status: "error" }));

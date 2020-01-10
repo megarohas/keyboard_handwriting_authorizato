@@ -387,7 +387,7 @@ const handler = async ({ req, res, db }) => {
   // let output = net.run([0.57, 0.127, 0.34]); // [0.987]
   // let output = net.run([0.44, 0.116, 0.24]); // [0.987]
 
-  let output = await net.run([...input3]); // [0.987]
+  let output = await net.run([...input1]); // [0.987]
   // let output = await net.run([...pairator(input3)]); // [0.987]
   console.log("output", JSON.stringify(output));
   // let output = net.run(["58", "026", "37"]); // [0.987]

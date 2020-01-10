@@ -7,7 +7,11 @@ const handler = async ({ req, res, db }) => {
   try {
     let nets = db.getTable("nets");
     let users = db.getTable("users");
+    let trains = db.getTable("trains");
     let db_nets = await nets.find().exec();
+    let db_trains = await trains.find().exec();
+    let last_created_train =
+      db_trains.length > 0 ? db_trains[db_trains.length - 1] : { id: "-1" };
     let last_created_net =
       db_nets.length > 0 ? db_nets[db_nets.length - 1] : { id: "-1" };
 
@@ -50,13 +54,33 @@ const handler = async ({ req, res, db }) => {
       trainers: trainers + ", " + req.body.id.toString()
     };
 
+    let new_train_data = {
+      phrase: last_created_net.phrase,
+      // net: Schema.Types.Mixed,
+      trainer_id: req.body.id.toString(),
+      net_id: last_created_net.id.toString(),
+      id: (parseInt(last_created_train.id) + 1).toString(),
+      train_data: JSON.stringify(req.body.keyboard_actions),
+      train_result: output[0],
+      timestamp: Date.now()
+    };
+
+    let new_train = new trains(new_train_data);
+
     nets.update({ id: last_created_net.id }, new_net, {}, err => {
       if (err) {
         res.statusCode = 500;
         res.end(JSON.stringify({ status: "error" }));
       } else {
-        res.statusCode = 200;
-        res.end(JSON.stringify({ last_created_net }));
+        new_train.save(err => {
+          if (err) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ status: "error" }));
+          } else {
+            res.statusCode = 200;
+            res.end(JSON.stringify({ last_created_net }));
+          }
+        });
       }
     });
   } catch (e) {

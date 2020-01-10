@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { users_schema, nets_schema } from "../../db/schema.js";
+import { users_schema, nets_schema, trains_schema } from "../../db/schema.js";
 
 const withMongoConnect = handler => async (req, res) => {
   try {
@@ -22,6 +22,7 @@ const withMongoConnect = handler => async (req, res) => {
       console.log("getSchema *************:", name);
       if (name == "users") return users_schema;
       if (name == "nets") return nets_schema;
+      if (name == "trains") return trains_schema;
     };
     let modelAlreadyDeclared = name => {
       try {
