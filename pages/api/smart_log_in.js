@@ -50,7 +50,8 @@ const handler = async ({ req, res, db }) => {
 
       if (user.id.toString() == possible_id.toString()) {
         res.statusCode = 200;
-        res.end(JSON.stringify({ status: "success" }));
+        let token = jwt.encode({ email }, "lhbcyz");
+        res.end(JSON.stringify({ token }));
       } else {
         res.statusCode = 401;
         res.end(JSON.stringify({ status: "error" }));

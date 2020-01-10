@@ -8,6 +8,7 @@ const cookies = new Cookies();
 import Snackbar from "@material-ui/core/Snackbar";
 import Router from "next/router";
 import { collectKeyboardActions } from "../helpers/front/funcs.js";
+import CustomSnackbar from "./custom_snackbar.js";
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -37,38 +38,37 @@ class LoginForm extends React.Component {
   }
 
   onLoginClick = async () => {
+    let response = { data: { token: "" } };
     if (this.state.keyboard_actions.length > 0) {
       let keyboard_actions = collectKeyboardActions({
         phrase: this.state.phrase,
         keyboard_actions: [...this.state.keyboard_actions]
       });
 
-      const response = await axios.post("/api/smart_log_in", {
+      response = await axios.post("/api/smart_log_in", {
         email: this.state.email,
         keyboard_actions,
         phrase: this.state.phrase
       });
-
-      console.log("response", response);
-      // console.log("keyboard_actions send", keyboard_actions);
     } else {
-      const response = await axios.post("/api/log_in", {
+      response = await axios.post("/api/log_in", {
         email: this.state.email,
         password: this.state.password
       });
-      const token = response.data.token;
-      // alert("Login was successful");
-      cookies.set("token", token);
-      this.setState({
-        token: token,
-        alert_is_open: true
-      });
-
-      setTimeout(() => {
-        this.setState({ alert_is_open: false });
-        Router.push("/profile");
-      }, 1000);
     }
+
+    console.log("response", response);
+    const token = response.data.token;
+    cookies.set("token", token);
+    this.setState({
+      token: token,
+      alert_is_open: true
+    });
+
+    setTimeout(() => {
+      this.setState({ alert_is_open: false });
+      Router.push("/dashboard");
+    }, 1000);
   };
 
   render() {
@@ -86,28 +86,12 @@ class LoginForm extends React.Component {
           backgroundColor: "rgba(54,69,79,0.15)"
         }}
       >
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          key={`${"top"},${"center"}`}
-          open={this.state.alert_is_open}
-          onClose={() => {
+        <CustomSnackbar
+          is_open={this.state.alert_is_open}
+          on_close={() => {
             this.setState({ alert_is_open: false });
           }}
-          ContentProps={{
-            "aria-describedby": "message-id"
-          }}
-          message={
-            <span
-              id="message-id"
-              style={{
-                fontFamily: "Roboto",
-                fontSize: "20px",
-                textAlign: "center"
-              }}
-            >
-              Login was successful
-            </span>
-          }
+          message={"Log In was Successful"}
         />
         <div
           style={{
@@ -160,7 +144,7 @@ class LoginForm extends React.Component {
             type={"text"}
             id="filled"
             label="Enter this phrase to below input to confirm your personality"
-            defaultValue={this.state.phrase}
+            // defaultValue={this.state.phrase}
             variant="filled"
             value={this.state.phrase}
             InputProps={{
@@ -171,7 +155,7 @@ class LoginForm extends React.Component {
           <TextField
             type={"text"}
             required
-            id="filled-required-password"
+            id="filled-required-smart-password"
             label="Enter Check Phrase Here"
             defaultValue=""
             variant="filled"

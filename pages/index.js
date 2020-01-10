@@ -107,7 +107,7 @@ class Home extends React.Component {
           <title>Home</title>
           <link rel="icon" href="/favicon.ico" />
           <link
-            href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+            href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap"
             rel="stylesheet"
           />
         </Head>

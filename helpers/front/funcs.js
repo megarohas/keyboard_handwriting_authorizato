@@ -1,7 +1,5 @@
 export function collectKeyboardActions({ phrase, keyboard_actions }) {
   let result_actions = [];
-  // let phrase = this.state.phrase;
-  // let keyboard_actions = [...this.state.keyboard_actions];
   // type: "key_down"
   // timestamp: 1578373827552
   // key: "k"
@@ -32,6 +30,7 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
         keyboard_action_up = keyboard_actions[i];
         keyboard_actions[i] = default_action;
       }
+
       if (
         JSON.stringify(keyboard_action_down) == JSON.stringify({}) &&
         (first_symbol.toLowerCase() == keyboard_actions[i].key.toLowerCase() &&
@@ -61,7 +60,6 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
         result_actions.push(keyboard_action);
       }
     }
-
     phrase = phrase.substring(1);
   } while (phrase.length > 0);
 
@@ -71,7 +69,6 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
       1000
   );
 
-  // let deltas = [];
   for (let i = 0; i < result_actions.length; i++) {
     if (i == 0) {
       result.push(result_actions[i].delta);
@@ -86,10 +83,6 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
     }
   }
 
-  // result = result_actions.map(item => {
-  //   return item.delta;
-  // });
-
   result.push(typing_time);
 
   for (let i = 0; i < result.length; i++) {
@@ -97,9 +90,9 @@ export function collectKeyboardActions({ phrase, keyboard_actions }) {
       result[i] = result[i] / 10;
     }
   }
+
   result.push(shift_flag);
   result.push(caps_flag);
-  console.log("result_actions", result_actions);
   console.log("typing_time", typing_time);
   console.log("result", result);
 

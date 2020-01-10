@@ -11,16 +11,16 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Snackbar from "@material-ui/core/Snackbar";
 import { collectKeyboardActions } from "../helpers/front/funcs.js";
+import Profile from "../components/profile.js";
+import InputAnalyzer from "../components/input_analyzer.js";
 
-class Profile extends React.Component {
+class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: { email: "", name: "" },
+      user: { email: "", name: "Profile" },
       alert_is_open: false,
-      keyboard_actions: [],
-      phrase: "",
-      smart_password: ""
+      phrase: ""
     };
   }
 
@@ -33,33 +33,28 @@ class Profile extends React.Component {
     });
   }
 
-  onTrainClick = async () => {
-    console.log("this.state.phrase", this.state.phrase);
-    let keyboard_actions = collectKeyboardActions({
-      phrase: this.state.phrase,
-      keyboard_actions: [...this.state.keyboard_actions]
-    });
-    const response = await axios.post("/api/train", {
-      keyboard_actions,
-      id: this.state.user.id,
-      phrase: this.state.phrase
-      // initializator: this.state.user.password_hash
-    });
-    console.log("response", response);
-    this.setState({
-      alert_is_open: true
-    });
-    setTimeout(() => {
-      this.setState({ alert_is_open: false });
-    }, 1000);
-  };
-
   render() {
     return (
-      <div>
+      <div
+        style={{
+          position: "fixed",
+          overflow: "scroll",
+          padding: "20px",
+          top: "0px",
+          left: "0px",
+          width: "calc(100% - 40px)",
+          height: "calc(100% - 40px)",
+          backgroundImage: "url(/dashboard_bg.jpg)",
+          fontFamily: "Roboto"
+        }}
+      >
         <Head>
-          <title>Profile</title>
+          <title>{this.state.user.name}</title>
           <link rel="icon" href="/favicon.ico" />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap"
+            rel="stylesheet"
+          />
         </Head>
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -84,84 +79,50 @@ class Profile extends React.Component {
             </span>
           }
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            cookies.remove("token");
-            Router.push("/");
-          }}
-        >
-          {"LogOut"}
-        </Button>
-        <h1>{`Hello, ${this.state.user.name} , this is keyboard_handwriting_authorizator project !!!`}</h1>
-        <h3>{`Name of the current user: ${this.state.user.name}`}</h3>
-        <h3>{`Email of the current user: ${this.state.user.email}`}</h3>
         <div
           style={{
-            width: "100%",
             display: "flex",
-            flexDirection: "column"
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
-          <TextField
-            type={"text"}
-            id="filled"
-            label="Enter this phrase to below input to confirm your personality"
-            defaultValue={this.state.phrase}
-            variant="filled"
-            value={this.state.phrase}
-            InputProps={{
-              readOnly: true
-            }}
-          />
-          <div style={{ width: "20px", height: "20px" }} />
-          <TextField
-            type={"text"}
-            required
-            id="filled-required-password"
-            label="Enter Check Phrase Here"
-            defaultValue=""
-            variant="filled"
-            onKeyDown={e => {
-              let keyboard_actions = [...this.state.keyboard_actions];
-              keyboard_actions.push({
-                type: "key_down",
-                timestamp: Date.now(),
-                key: e.key
-              });
-              this.setState({ keyboard_actions });
-            }}
-            onKeyUp={e => {
-              let keyboard_actions = [...this.state.keyboard_actions];
-              keyboard_actions.push({
-                type: "key_up",
-                timestamp: Date.now(),
-                key: e.key
-              });
-              this.setState({ keyboard_actions });
-            }}
-            onChange={e => {
-              let new_value = e.target.value || "";
-              this.setState({ smart_password: new_value }, () => {});
-            }}
-          />
-          <div style={{ width: "20px", height: "20px" }} />
           <Button
             variant="contained"
+            color="primary"
             onClick={() => {
-              this.onTrainClick();
+              cookies.remove("token");
+              Router.push("/");
             }}
           >
-            Train
+            {"LogOut"}
           </Button>
         </div>
+        <Profile user={this.state.user} />
+        <InputAnalyzer
+          user={this.state.user}
+          phrase={this.state.phrase}
+          url={"/api/train"}
+          button_text={"Train"}
+          block_title={"Use this form to improve accuracy of smart log in."}
+          on_succes={() => {
+            this.setState({
+              alert_is_open: true
+            });
+            setTimeout(() => {
+              this.setState({ alert_is_open: false });
+            }, 1000);
+          }}
+          on_error={() => {
+            console.log("error");
+          }}
+        />
       </div>
     );
   }
 }
 
-Profile.getInitialProps = async ctx => {
+Dashboard.getInitialProps = async ctx => {
   let response = { response: { data: { user: {} } } };
 
   await handleAuthSSR(ctx);
@@ -189,6 +150,8 @@ Profile.getInitialProps = async ctx => {
     // const response = await axios.get(`${serverUrl}/api/ping`, {
     //   headers: { Authorization: token }
     // });
+
+    console.log(`${serverUrl}/api/get_current_user response`, response);
   } catch (err) {
     if (ctx.res) {
       ctx.res.writeHead(302, {
@@ -208,4 +171,4 @@ Profile.getInitialProps = async ctx => {
   // return { uid: params.id };
 };
 
-export default Profile;
+export default Dashboard;
