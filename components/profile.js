@@ -4,10 +4,10 @@ import Snackbar from "@material-ui/core/Snackbar";
 const Profile = ({ user }) => {
   let project_link = (
     <a
-      style={{ margin: "0px 10px" }}
+      style={{ margin: "0px 10px", wordBreak: "break-all" }}
       href="https://github.com/megarohas/keyboard_handwriting_authorizator"
       target="_blank"
-    >{` keyboard_handwriting_authorizator project `}</a>
+    >{` keyboard_handwriting_authorizator `}</a>
   );
   return (
     <div
@@ -21,7 +21,7 @@ const Profile = ({ user }) => {
     >
       <div style={{ display: "flex" }}>
         <h1>{`Hello, ${user.name} , this is  `}</h1> <h1>{project_link}</h1>
-        <h1>{` !!!`}</h1>
+        <h1>{`project !!!`}</h1>
       </div>
       <h3
         style={{ fontWeight: "400" }}

@@ -101,7 +101,8 @@ class LoginForm extends React.Component {
             backgroundColor: "white",
             padding: "50px 50px",
             borderRadius: "5px",
-            boxShadow: "0 0 10px rgba(0,0,0,0.22)"
+            boxShadow: "0 0 10px rgba(0,0,0,0.22)",
+            minWidth: "256px"
           }}
         >
           <div
