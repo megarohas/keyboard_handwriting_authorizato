@@ -149,11 +149,11 @@ Dashboard.getInitialProps = async ctx => {
   }
   console.log("token", token);
 
-  if (serverUrl == "localhost") {
+  if (serverUrl.includes("localhost")) {
     serverUrl = "http://localhost:3000";
   }
-  if (serverUrl == "localhost:3000") {
-    serverUrl = "http://localhost:3000";
+  if (!serverUrl.includes("http")) {
+    serverUrl = `https://${serverUrl}`;
   }
 
   try {

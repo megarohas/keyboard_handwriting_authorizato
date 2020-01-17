@@ -25,12 +25,13 @@ export async function handleAuthSSR(ctx) {
     "host ******** ))))))))))))))))))))))))))))))))))))))))",
     serverUrl
   );
-  if (serverUrl == "localhost") {
+  if (serverUrl.includes("localhost")) {
     serverUrl = "http://localhost:3000";
   }
-  if (serverUrl == "localhost:3000") {
-    serverUrl = "http://localhost:3000";
+  if (!serverUrl.includes("http")) {
+    serverUrl = `https://${serverUrl}`;
   }
+
   try {
     // const response = await axios.get(`/api/ping`, {
     const response = await axios.get(`${serverUrl}/api/ping`, {
