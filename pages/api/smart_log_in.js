@@ -41,10 +41,62 @@ const handler = async ({ req, res, db }) => {
       console.log("");
       console.log("smart_log_in output *******", output);
 
-      let possible_id =
-        Math.trunc(parseFloat(output["0"])) == parseInt(last_created_user.id)
-          ? Math.floor(parseFloat(output["0"]))
-          : Math.round(parseFloat(output["0"]));
+      let rounder = (number, delta) => {
+        if (!number.toString().split(".")[1]) return number;
+        let number_integer = Math.trunc(parseFloat(number));
+        let number_fraction = number.toString().split(".")[1];
+
+        let low = "0";
+        let high = "10";
+        while (number_fraction.length < delta.toString().length) {
+          number_fraction += "0";
+        }
+        while (number_fraction.length > delta.toString().length) {
+          number_fraction = number_fraction.substring(
+            0,
+            number_fraction.length - 1
+          );
+        }
+        while (high.length < delta.toString().length + 1) {
+          high += "0";
+        }
+
+        console.log("low", low);
+        console.log("high", high);
+        console.log("number_integer", number_integer);
+        console.log("number_fraction", number_fraction);
+        console.log("delta", delta);
+
+        number_fraction = parseInt(number_fraction);
+        delta = parseInt(delta);
+        low = parseInt(low);
+        high = parseInt(high);
+
+        if (
+          (number_fraction <= delta && number_fraction >= 0) ||
+          (number_fraction >= high - delta && number_fraction < high)
+        ) {
+          if (number_fraction <= delta && number_fraction >= 0) {
+            return number_integer;
+          } else {
+            return number_integer + 1;
+          }
+        } else {
+          return parseInt(-99999);
+        }
+      };
+
+      let possible_id = rounder(output["0"], 2);
+      // let pre_possible_id = output["0"].toString().split(".")[1]
+      //   ? output["0"].toString().split(".")[1][0] == "0" ||
+      //     output["0"].toString().split(".")[1][0] == "9"
+      //     ? parseFloat(output["0"])
+      //     : parseFloat(-99999)
+      //   : output["0"];
+      // let possible_id =
+      //   Math.trunc(parseFloat(output["0"])) == parseInt(last_created_user.id)
+      //     ? Math.floor(pre_possible_id)
+      //     : Math.round(parseFloat(pre_possible_id));
       console.log("smart_log_in possible_id *******", possible_id);
       console.log("smart_log_in user_id *******", user.id);
 
