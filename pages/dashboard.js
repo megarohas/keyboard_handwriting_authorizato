@@ -142,10 +142,19 @@ Dashboard.getInitialProps = async ctx => {
       /(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/,
       "$1"
     );
+    serverUrl = ctx.req.headers.host;
   } else {
     token = cookies.get("token");
+    serverUrl = location.origin;
   }
   console.log("token", token);
+
+  if (serverUrl == "localhost") {
+    serverUrl = "http://localhost:3000";
+  }
+  if (serverUrl == "localhost:3000") {
+    serverUrl = "http://localhost:3000";
+  }
 
   try {
     response = await axios.post(

@@ -5,7 +5,6 @@ import { Cookies } from "react-cookie";
 import { handleAuthSSR } from "../helpers/front/check_auth.js";
 const cookies = new Cookies();
 import queryString from "query-string";
-let serverUrl = "http://localhost:3000";
 import Router from "next/router";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";

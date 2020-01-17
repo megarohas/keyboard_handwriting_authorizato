@@ -6,17 +6,33 @@ let serverUrl = "http://localhost:3000";
 
 export async function handleAuthSSR(ctx) {
   let token = null;
-
+  let host = "";
+  // console.log("ctx.req", ctx);
   if (ctx.req) {
     token = ctx.req.headers.cookie.replace(
       /(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/,
       "$1"
     );
+
+    serverUrl = ctx.req.headers.host;
   } else {
     token = cookies.get("token");
+    console.log("location", location);
+    serverUrl = location.origin;
   }
 
+  console.log(
+    "host ******** ))))))))))))))))))))))))))))))))))))))))",
+    serverUrl
+  );
+  if (serverUrl == "localhost") {
+    serverUrl = "http://localhost:3000";
+  }
+  if (serverUrl == "localhost:3000") {
+    serverUrl = "http://localhost:3000";
+  }
   try {
+    // const response = await axios.get(`/api/ping`, {
     const response = await axios.get(`${serverUrl}/api/ping`, {
       headers: { Authorization: token }
     });
